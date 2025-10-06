@@ -32,16 +32,13 @@ contract MerkleAirdrop {
     }
 
     function claimAirdrop(address account, uint256 amount, bytes32[] calldata merkleProof) external {
-
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(account, amount))));
 
-        if(!MerkleProof.verify(merkleProof, i_merkleRoot, leaf)) {
+        if (!MerkleProof.verify(merkleProof, i_merkleRoot, leaf)) {
             revert MerkleAirdrop_InvalidProof();
         }
 
         emit ClaimAirdrop(account, amount);
         i_token.transfer(account, amount);
-
     }
-    
 }
