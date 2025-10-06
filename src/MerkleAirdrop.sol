@@ -1,17 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 contract MerkleAirdrop {
+    using SafeERC20 for IERC20;
     // some list of addresses
     // Allow someone to claim tokens if they are in the list
+
     error MerkleAirdrop_InvalidProof();
 
     address[] eligibleAddresses;
-    bytes32 private immutable i_merkleRoot;
-    IERC20 private immutable i_token;
+    bytes32 private immutable I_MERKLE_ROOT;
+    IERC20 private immutable I_TOKEN;
 
     event ClaimAirdrop(address account, uint256 amount);
 
@@ -27,18 +29,18 @@ contract MerkleAirdrop {
      * that's why we use Merkle Tree to optimize this process.
      */
     constructor(bytes32 merkleRoot, IERC20 token) {
-        i_merkleRoot = merkleRoot;
-        i_token = token;
+        I_MERKLE_ROOT = merkleRoot;
+        I_TOKEN = token;
     }
 
     function claimAirdrop(address account, uint256 amount, bytes32[] calldata merkleProof) external {
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(account, amount))));
 
-        if (!MerkleProof.verify(merkleProof, i_merkleRoot, leaf)) {
+        if (!MerkleProof.verify(merkleProof, I_MERKLE_ROOT, leaf)) {
             revert MerkleAirdrop_InvalidProof();
         }
 
         emit ClaimAirdrop(account, amount);
-        i_token.transfer(account, amount);
+        I_TOKEN.safeTransfer(account, amount);
     }
 }

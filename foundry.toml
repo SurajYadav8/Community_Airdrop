@@ -7,4 +7,8 @@ remappings = [
     'forge-std/ = lib/forge-std/src/'
 ]
 
+[lint]
+
+exclude_lints = ["screaming-snake-case-constant"]
+
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
