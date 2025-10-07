@@ -16,3 +16,4 @@ docs/
 #libraries
 lib/openzeppelin-contracts/
 lib/forge-std/
+lib/solady/
