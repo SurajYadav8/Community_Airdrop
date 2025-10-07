@@ -3,16 +3,19 @@ pragma solidity ^0.8.24;
 
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+
 contract MerkleAirdrop {
     using SafeERC20 for IERC20;
     // some list of addresses
     // Allow someone to claim tokens if they are in the list
 
     error MerkleAirdrop_InvalidProof();
+    error MerkleAirdrop_AlreadyClaimed();
 
-    address[] eligibleAddresses;
+    address[] eligible;
     bytes32 private immutable I_MERKLE_ROOT;
     IERC20 private immutable I_TOKEN;
+    mapping(address eligible => bool claimed) private hasclaimed;
 
     event ClaimAirdrop(address account, uint256 amount);
 
@@ -33,6 +36,9 @@ contract MerkleAirdrop {
     }
 
     function claimAirdrop(address account, uint256 amount, bytes32[] calldata merkleProof) external {
+        if (hasclaimed[account]) {
+            revert MerkleAirdrop_AlreadyClaimed();
+        }
         // bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(account, amount)))); // works too but more expensive
 
         bytes32 leaf; // declared outside so do not clash between YUL and solidity
@@ -47,7 +53,8 @@ contract MerkleAirdrop {
             mstore(ptr, firstHash)
             leaf := keccak256(ptr, 0x20)
         }
-        
+
+        hasclaimed[account] = true;
 
         if (!MerkleProof.verify(merkleProof, I_MERKLE_ROOT, leaf)) {
             revert MerkleAirdrop_InvalidProof();
