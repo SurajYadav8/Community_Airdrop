@@ -17,3 +17,6 @@ docs/
 lib/openzeppelin-contracts/
 lib/forge-std/
 lib/solady/
+lib/murky/
+lib/murky/lib/forge-std/
+

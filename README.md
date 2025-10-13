@@ -64,3 +64,9 @@ $ forge --help
 $ anvil --help
 $ cast --help
 ```
+
+### GnerateInput
+
+```shell
+$ forge script script/GenerateInput.s.sol:GenerateInput
+```
