@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Script} from "../lib/forge-std/src/Script.sol";
-import {stdJson} from "../lib/forge-std/src/StdJson.sol";
+// import {stdJson} from "../lib/forge-std/src/StdJson.sol";
 import {console} from "../lib/forge-std/src/console.sol";
 
 // Merkle tree input file generator script
@@ -21,14 +21,14 @@ contract GenerateInput is Script {
         whitelist[2] = "0x2ea3970Ed82D5b30be821FAAD4a731D35964F7dd";
         whitelist[3] = "0xf6dBa02C01AF48Cf926579F77C9f874Ca640D91D";
         count = whitelist.length;
-        string memory input = _createJSON();
+        string memory input = createJson();
         // write to the output file the stringified output json tree dump
         vm.writeFile(string.concat(vm.projectRoot(), INPUT_PATH), input);
 
         console.log("DONE: The output is found at %s", INPUT_PATH);
     }
 
-    function _createJSON() internal view returns (string memory) {
+    function createJson() internal view returns (string memory) {
         string memory countString = vm.toString(count); // convert count to string
         string memory amountString = vm.toString(AMOUNT); // convert amount to string
         string memory json = string.concat('{ "types": ["address", "uint"], "count":', countString, ',"values": {');
