@@ -5,8 +5,8 @@ libs = ["lib"]
 
 ffi = true
 fs_permissions = [
-  { access = "read", path = "./script/target" },
-  { access = "write", path = "./script/target" }
+  { access = "read-write", path = "./" },
+  
 ]
 
 remappings = [
