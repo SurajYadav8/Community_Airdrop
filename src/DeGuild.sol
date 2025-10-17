@@ -6,4 +6,8 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract DeGuild is ERC20, Ownable {
     constructor() ERC20("DeGuild", "DG") Ownable(msg.sender) {}
+
+    function mint(address account, uint256 amount) external onlyOwner {
+        _mint(account, amount);
+    }
 }

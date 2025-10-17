@@ -46,8 +46,8 @@ contract MerkleAirdrop {
         // Using YUL assembly to optimize gas cost
         assembly {
             let ptr := mload(0x40)
-            mstore(ptr, amount)
-            mstore(add(ptr, 0x20), account)
+            mstore(ptr, account)
+            mstore(add(ptr, 0x20), amount)
             let firstHash := keccak256(ptr, 0x40)
 
             mstore(ptr, firstHash)
