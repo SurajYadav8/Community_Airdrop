@@ -4,8 +4,10 @@ pragma solidity ^0.8.24;
 import {Test, console} from "../lib/forge-std/src/Test.sol";
 import {MerkleAirdrop} from "../src/MerkleAirdrop.sol";
 import {DeGuild} from "../src/DeGuild.sol";
+import {ZkSyncChainChecker} from "../lib/foundry-devops/src/ZkSyncChainChecker.sol";
+import {DeployMerkleAirdrop} from "../script/DeployMerkleAirdrop.s.sol";
 
-contract MerkleAirdropTest is Test {
+contract MerkleAirdropTest is Test, ZkSyncChainChecker {
     MerkleAirdrop public airdrop;
     DeGuild public token;
 
@@ -20,11 +22,18 @@ contract MerkleAirdropTest is Test {
     uint256 userPrivateKey;
 
     function setUp() public {
-        token = new DeGuild();
-        airdrop = new MerkleAirdrop(Root, token);
-        token.mint(token.owner(), Amount_To_Send);
-        token.transfer(address(airdrop), Amount_To_Send);
-        (user, userPrivateKey) = makeAddrAndKey("user"); // foundry cheatcode to make fake user and private key for testing
+        if (!isZkSyncChain()) {
+            //
+            DeployMerkleAirdrop deployer = new DeployMerkleAirdrop();
+            (airdrop, token) = deployer.deployMerkleAirdrop();
+        } else {
+            token = new DeGuild();
+            airdrop = new MerkleAirdrop(Root, token);
+            token.mint(token.owner(), Amount_To_Send);
+            token.transfer(address(airdrop), Amount_To_Send);
+        }
+        (user, userPrivateKey) = makeAddrAndKey("user");
+        // foundry cheatcode to make fake user and private key for testing
     }
 
     function testUserClaim() public {
@@ -37,5 +46,4 @@ contract MerkleAirdropTest is Test {
     }
 
     // console.log("Claimed");
-
 }
